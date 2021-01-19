@@ -1,0 +1,3 @@
+<template>
+  advet-space
+</template>

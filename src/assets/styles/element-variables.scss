@@ -1,9 +1,16 @@
+@import './variables.scss';
+
+
 /*
 Write your variables here. All available variables can be
 found in element-plus/packages/theme-chalk/src/common/var.scss.
 For example, to overwrite the theme color:
 */
-$--color-primary: hotpink;
+$--color-primary: $primary-color;
+$--color-success: $success-color;
+$--color-warning: $warning-color;
+$--color-danger: $danger-color;
+$--color-info: $info-color;
 
 /* icon font path, required */
 $--font-path: '~element-plus/lib/theme-chalk/fonts';
