@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "dev": "vue-cli-service serve"
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "element-plus": "^1.0.1-alpha.19",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0",
@@ -31,9 +32,10 @@
     "eslint-plugin-vue": "^7.0.0-0",
     "lint-staged": "^9.5.0",
     "prettier": "^1.19.1",
-    "sass": "^1.26.5",
-    "sass-loader": "^8.0.2",
-    "typescript": "~3.9.3"
+    "sass": "^1.27.0",
+    "sass-loader": "^10.0.4",
+    "typescript": "~3.9.3",
+    "vue-cli-plugin-element-plus": "^0.0.12"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
