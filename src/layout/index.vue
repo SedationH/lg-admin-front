@@ -4,7 +4,7 @@
       <Aside />
     </el-aside>
     <el-container>
-      <el-header>Header</el-header>
+      <el-header> <Header /></el-header>
       <el-main>
         <router-view></router-view>
       </el-main>
@@ -15,10 +15,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Aside from './components/Aside.vue'
+import Header from './components/Header.vue'
 
 export default defineComponent({
   components: {
-    Aside
+    Aside,
+    Header
   }
 })
 </script>
