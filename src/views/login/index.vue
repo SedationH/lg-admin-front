@@ -107,6 +107,9 @@ export default defineComponent({
           if (data.state !== 1 && data.state !== 200) {
             ElMessage.error(`Fail Login ${data.message}`)
           } else {
+            this.$router.replace(
+              (this.$route.query.redirect as string) || '/'
+            )
             this.setUserLoginInfo(JSON.parse(data.content))
             ElMessage.success('Success Login')
           }
