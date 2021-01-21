@@ -34,12 +34,14 @@
       </el-form-item>
     </el-form>
   </div>
+  <button @click="getVuex">Vuex</button>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { ElForm, ElMessage } from 'element-plus'
 import { login } from '@/services/user'
+import { mapMutations } from 'vuex'
 
 const checkPhone = (
   rule: object,
@@ -94,6 +96,7 @@ export default defineComponent({
     submitLoading: false
   }),
   methods: {
+    ...mapMutations('user', ['setUserLoginInfo']),
     async handleSubmit() {
       try {
         const res = await (this.$refs
@@ -101,18 +104,21 @@ export default defineComponent({
         if (res) {
           this.submitLoading = true
           const { data } = await login(this.model)
-          console.log(typeof data.state)
           if (data.state !== 1 && data.state !== 200) {
             ElMessage.error(`Fail Login ${data.message}`)
           } else {
+            this.setUserLoginInfo(JSON.parse(data.content))
             ElMessage.success('Success Login')
           }
         }
       } catch (error) {
         // 不知道如何处理异常更合适
-        ElMessage.error('Fail Login')
+        ElMessage.error(`Fail Login ${error}`)
       }
       this.submitLoading = false
+    },
+    getVuex() {
+      console.log(this.$store)
     }
   }
 })
