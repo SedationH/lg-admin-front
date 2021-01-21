@@ -4,6 +4,9 @@ import {
   RouteRecordRaw
 } from 'vue-router'
 import Layout from '@/layout/index.vue'
+
+import store from '@/store'
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/login',
@@ -15,8 +18,8 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/',
-    name: 'Home',
     component: Layout,
+    meta: { isAuthenticated: true },
     children: [
       {
         path: '', // 默认子路由
@@ -98,6 +101,22 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (
+    !to.matched.some(value => value.meta.isAuthenticated)
+  ) {
+    next()
+  } else {
+    if (store.getters['user/userLoginInfo']) {
+      next()
+    } else {
+      next({
+        path: '/login'
+      })
+    }
+  }
 })
 
 export default router
