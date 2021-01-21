@@ -38,63 +38,81 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { ElForm, ElMessage } from 'element-plus'
+import { login } from '@/services/user'
+
+const checkPhone = (
+  rule: object,
+  value: string,
+  callback: Function
+) => {
+  if (!value) {
+    return callback(new Error('手机号不能为空'))
+  }
+  if (!value.match(/^[0-9]{11}$/)) {
+    callback(new Error('请输入正确手机号'))
+  } else {
+    callback()
+  }
+}
+
+const checkPassword = (
+  rule: object,
+  value: string,
+  callback: Function
+) => {
+  if (value === '' || value.length < 6) {
+    callback(new Error('密码不能少于6位'))
+  } else {
+    callback()
+  }
+}
 
 export default defineComponent({
   name: 'login',
-  data() {
-    const checkPhone = (
-      rule: object,
-      value: string,
-      callback: Function
-    ) => {
-      if (!value) {
-        return callback(new Error('手机号不能为空'))
-      }
-      if (!value.match(/^[0-9]{11}$/)) {
-        callback(new Error('请输入正确手机号'))
-      } else {
-        callback()
-      }
-    }
-    const checkPassword = (
-      rule: object,
-      value: string,
-      callback: Function
-    ) => {
-      if (value === '' || value.length < 6) {
-        callback(new Error('密码不能少于6位'))
-      } else {
-        callback()
-      }
-    }
-
-    return {
-      model: {
-        password: '111111',
-        phone: '15510792995'
-      },
-      rules: {
-        password: [
-          {
-            required: true,
-            validator: checkPassword,
-            trigger: ['change', 'blur']
-          }
-        ],
-        phone: [
-          {
-            required: true,
-            validator: checkPhone,
-            trigger: ['change', 'blur']
-          }
-        ]
-      },
-      submitLoading: false
-    }
-  },
+  data: () => ({
+    model: {
+      password: '111111',
+      phone: '15510792995'
+    },
+    rules: {
+      password: [
+        {
+          required: true,
+          validator: checkPassword,
+          trigger: ['change', 'blur']
+        }
+      ],
+      phone: [
+        {
+          required: true,
+          validator: checkPhone,
+          trigger: ['change', 'blur']
+        }
+      ]
+    },
+    submitLoading: false
+  }),
   methods: {
-    handleSubmit() {
-      console.log('hi')
+    async handleSubmit() {
+      try {
+        const res = await (this.$refs
+          .formRef as typeof ElForm).validate()
+        if (res) {
+          this.submitLoading = true
+          const { data } = await login(this.model)
+          console.log(typeof data.state)
+          if (data.state !== 1 && data.state !== 200) {
+            ElMessage.error(`Fail Login ${data.message}`)
+          } else {
+            ElMessage.success('Success Login')
+          }
+        }
+      } catch (error) {
+        // 不知道如何处理异常更合适
+        ElMessage.error('Fail Login')
+      }
+      this.submitLoading = false
     }
   }
 })
