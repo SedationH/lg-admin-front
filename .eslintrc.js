@@ -23,6 +23,7 @@ module.exports = {
       process.env.NODE_ENV === 'production'
         ? 'warn'
         : 'off',
-    '@typescript-eslint/no-explicit-any': 0
+    '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/ban-ts-ignore': 0
   }
 }

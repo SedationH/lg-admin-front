@@ -1,23 +1,36 @@
 <template>
   <div class="login-container">
-    <el-form label-position="top" label-width="100px">
-      <el-form-item label="Phone">
+    <el-form
+      ref="formRef"
+      :model="model"
+      :rules="rules"
+      label-position="top"
+      label-width="100px"
+      status-icon
+    >
+      <el-form-item label="Phone" prop="phone">
         <el-input
           placeholder="Plaase input phone"
-          v-model="formData.phone"
+          v-model="model.phone"
         ></el-input>
       </el-form-item>
-      <el-form-item label="Password">
+      <el-form-item label="Password" prop="password">
         <el-input
           show-password
           placeholder="Plaase input password"
-          v-model="formData.password"
+          v-model="model.password"
+          autocomplete="off"
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="handleLogin"
-          >Login</el-button
+        <el-button
+          :loading="submitLoading"
+          type="primary"
+          @click="handleSubmit"
+          autocomplete="off"
         >
+          Login
+        </el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -25,30 +38,63 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { login } from '@/services/user'
 
 export default defineComponent({
   name: 'login',
-  data: () => ({
-    formData: {
-      password: '111111',
-      phone: '15510792995'
-    }
-  }),
-  methods: {
-    async handleLogin() {
-      const { data } = await login(this.formData)
-      if (data.state != 1 && data.state != 200) {
-        this.$message({
-          message: 'Fail Login',
-          type: 'error'
-        })
-      } else {
-        this.$message({
-          message: 'Success Login',
-          type: 'success'
-        })
+  data() {
+    const checkPhone = (
+      rule: object,
+      value: string,
+      callback: Function
+    ) => {
+      if (!value) {
+        return callback(new Error('手机号不能为空'))
       }
+      if (!value.match(/^[0-9]{11}$/)) {
+        callback(new Error('请输入正确手机号'))
+      } else {
+        callback()
+      }
+    }
+    const checkPassword = (
+      rule: object,
+      value: string,
+      callback: Function
+    ) => {
+      if (value === '' || value.length < 6) {
+        callback(new Error('密码不能少于6位'))
+      } else {
+        callback()
+      }
+    }
+
+    return {
+      model: {
+        password: '111111',
+        phone: '15510792995'
+      },
+      rules: {
+        password: [
+          {
+            required: true,
+            validator: checkPassword,
+            trigger: ['change', 'blur']
+          }
+        ],
+        phone: [
+          {
+            required: true,
+            validator: checkPhone,
+            trigger: ['change', 'blur']
+          }
+        ]
+      },
+      submitLoading: false
+    }
+  },
+  methods: {
+    handleSubmit() {
+      console.log('hi')
     }
   }
 })
