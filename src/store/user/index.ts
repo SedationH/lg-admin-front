@@ -1,6 +1,7 @@
 import { UserState, UserInfo } from '@/types'
 import { get, set } from '@/utils/storage'
 const userLoginInfo = get('userLoginInfo', localStorage)
+import { getInfo } from '@/services/user'
 
 const state: UserState = {
   userInfo: {
@@ -15,6 +16,9 @@ const mutations = {
   setUserLoginInfo(state: UserState, payload: object) {
     state.userLoginInfo = payload
     set('userLoginInfo', payload, localStorage)
+  },
+  setUserInfo(state: UserState, data: UserInfo) {
+    state.userInfo = data
   }
 }
 
@@ -35,9 +39,25 @@ const getters = {
   }
 }
 
+const actions = {
+  /**
+   * 调用接口获取用户信息
+   * @param commit
+   */
+  async getInfo({ commit }: { commit: Function }) {
+    try {
+      const { data } = await getInfo()
+      commit('setUserInfo', data.content)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+}
+
 export default {
   namespaced: true,
   state,
   mutations,
-  getters
+  getters,
+  actions
 }

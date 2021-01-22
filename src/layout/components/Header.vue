@@ -1,9 +1,9 @@
 <template>
   <div class="header-container">
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }"
-        >homepage</el-breadcrumb-item
-      >
+      <el-breadcrumb-item :to="{ path: '/' }">
+        homepage
+      </el-breadcrumb-item>
       <el-breadcrumb-item
         >promotion management</el-breadcrumb-item
       >
@@ -21,7 +21,8 @@
           shape="square"
           size="large"
           :src="
-            require('@/assets/images/default-avatar.png')
+            (userInfo && userInfo.portrait) ||
+              require('@/assets/images/default-avatar.png')
           "
         />
         <i class="el-icon-arrow-down el-icon--right"></i>
@@ -42,18 +43,22 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default defineComponent({
   computed: {
     ...mapGetters('user', ['userInfo'])
   },
   methods: {
+    ...mapActions('user', ['getInfo']),
     ...mapMutations('user', ['setUserLoginInfo']),
     onExit() {
       this.setUserLoginInfo(null)
       this.$router.push('/login')
     }
+  },
+  created() {
+    this.getInfo()
   }
 })
 </script>
