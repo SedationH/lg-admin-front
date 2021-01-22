@@ -47,7 +47,7 @@ import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default defineComponent({
   computed: {
-    ...mapGetters('user', ['userInfo'])
+    ...mapGetters('user', ['userInfo', 'userLoginInfo'])
   },
   methods: {
     ...mapActions('user', ['getInfo']),
@@ -58,6 +58,8 @@ export default defineComponent({
     }
   },
   created() {
+    this.getInfo()
+    this.getInfo()
     this.getInfo()
   }
 })

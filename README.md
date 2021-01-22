@@ -83,3 +83,108 @@ https://blog.logrocket.com/how-to-write-a-vue-js-app-completely-in-typescript/
 但我还是选择Options + Compositon
 
 感觉用Class + decorator应该是后端程序员写出来的，看得我不舒服，还是喜欢函数式和配置式
+
+
+
+## 开始编码
+
+整合Vuex Router Axios(interceptor) ElementPlus
+
+其间的细节挺多，尝试通过文档和源码来解决遇到的问题
+
+
+
+提一些默认行为
+
+axios 会根据data 自动设置content-type
+
+
+
+## token处理
+
+接口在我们登录成功后会提供👇的内容
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTAwMDMwMDE2IiwidXNlcl9uYW1lIjoiMTU1MTA3OTI5OTUiLCJzY29wZSI6WyJyZWFkIl0sIm9yZ2FuaXphdGlvbiI6IjE1NTEwNzkyOTk1IiwiZXhwIjoxNjExMjgyOTc0LCJhdXRob3JpdGllcyI6WyJBRE1JTiJdLCJqdGkiOiJqV2FHcWpYd0tQcHE3V0NPNHZzcW1KcDQzUTgiLCJjbGllbnRfaWQiOiJ0ZXN0X2NsaWVudCJ9.2I6q-GQsXemuWibl1f6AtLZCnhQjYxv3vvnGLQsu37I",
+  "token_type": "bearer",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTAwMDMwMDE2IiwidXNlcl9uYW1lIjoiMTU1MTA3OTI5OTUiLCJzY29wZSI6WyJyZWFkIl0sIm9yZ2FuaXphdGlvbiI6IjE1NTEwNzkyOTk1IiwiYXRpIjoialdhR3FqWHdLUHBxN1dDTzR2c3FtSnA0M1E4IiwiZXhwIjoxNjExMzQzODQyLCJhdXRob3JpdGllcyI6WyJBRE1JTiJdLCJqdGkiOiJhWkFkd28zQjZGdmhaRmx0WDhoSmZXaUcyVTgiLCJjbGllbnRfaWQiOiJ0ZXN0X2NsaWVudCJ9.-fR9aMvlPNHa3QPS-S1woBECg9oI_nat8xyYGwhKSzI",
+  "expires_in": 6337,
+  "scope": "read",
+  "user_id": "100030016",
+  "organization": "15510792995",
+  "jti": "jWaGqjXwKPpq7WCO4vsqmJp43Q8"
+}
+```
+
+expires_in表示过期时间
+
+为了安全性考虑
+
+>  我的token处理存在cookie中，而token又代表着用户的身份
+
+token只会在一段时间内有效，需要通过refresh_token去刷新token，再发送请求
+
+这里的可能遇到的问题，多个资源在请求的时候遇到需要token需要刷新，不做特殊处理的话，就发送了多次token刷新的请求，而refresh_token只能用一次，无效的刷新不做特殊处理又可能造成有效获取的新token失效
+
+解决方案如下
+
+![image-20210122094623187](http://picbed.sedationh.cn/image-20210122094623187.png)
+
+其间对Promise的运用要求挺熟练的...
+
+
+
+![image-20210122114141507](http://picbed.sedationh.cn/image-20210122114141507.png)
+
+三个请求 请求一次refresh 
+
+从头到尾的逻辑都是自己写出来的，感觉写的代码好漂亮🥰
+
+```js
+let isRefreshingToken = false
+let reqQueue: Function[] = []
+
+async function handleUnauthorized(config: object) {
+  // 1. no login
+  // 2. need refresh token
+
+  // 1
+  const userLoginInfo = store.getters['user/userLoginInfo']
+  if (!userLoginInfo) {
+    router.push({
+      name: 'login'
+    })
+  } else {
+    // 2
+    if (!isRefreshingToken) {
+      isRefreshingToken = true
+      const { refresh_token: refreshtoken } = userLoginInfo
+      try {
+        const { data } = await refreshToken({
+          refreshtoken
+        })
+        if (!data.success) {
+          throw new Error('token 刷新失败')
+        }
+        store.commit(
+          'user/setUserLoginInfo',
+          JSON.parse(data.content)
+        )
+        reqQueue.forEach(cb => cb())
+        isRefreshingToken = false
+        reqQueue = []
+        // continue fail req
+        return request(config)
+      } catch (error) {
+        ElMessage.error(error)
+        // let router handle jump page
+        store.commit('user/setUserLoginInfo', null)
+      }
+    } else {
+      reqQueue.push(() => request(config))
+    }
+  }
+}
+```
+

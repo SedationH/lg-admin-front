@@ -45,12 +45,8 @@ const actions = {
    * @param commit
    */
   async getInfo({ commit }: { commit: Function }) {
-    try {
-      const { data } = await getInfo()
-      commit('setUserInfo', data.content)
-    } catch (e) {
-      console.log(e)
-    }
+    const userInfo = await getInfo()
+    commit('setUserInfo', userInfo)
   }
 }
 

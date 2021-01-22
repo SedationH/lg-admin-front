@@ -103,16 +103,12 @@ export default defineComponent({
           .formRef as typeof ElForm).validate()
         if (res) {
           this.submitLoading = true
-          const { data } = await login(this.model)
-          if (data.state !== 1 && data.state !== 200) {
-            ElMessage.error(`Fail Login ${data.message}`)
-          } else {
-            this.$router.replace(
-              (this.$route.query.redirect as string) || '/'
-            )
-            this.setUserLoginInfo(JSON.parse(data.content))
-            ElMessage.success('Success Login')
-          }
+          const userInfo = await login(this.model)
+          this.setUserLoginInfo(userInfo)
+          this.$router.replace(
+            (this.$route.query.redirect as string) || '/'
+          )
+          ElMessage.success('Success Login')
         }
       } catch (error) {
         // 不知道如何处理异常更合适
