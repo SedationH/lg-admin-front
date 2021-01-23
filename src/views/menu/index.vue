@@ -1,5 +1,9 @@
 <template>
-  <el-button type="primary" icon="el-icon-plus">
+  <el-button
+    type="primary"
+    icon="el-icon-plus"
+    @click="handleAdd"
+  >
     添加菜单
   </el-button>
 
@@ -37,13 +41,13 @@
       <template #default="scope">
         <el-button
           size="mini"
-          @click="handleEdit(scope.$index, scope.row)"
+          @click="handleEdit(scope.row)"
           >Edit</el-button
         >
         <el-button
           size="mini"
           type="danger"
-          @click="handleDelete(scope.$index, scope.row)"
+          @click="handleDelete(scope.row)"
           >Delete</el-button
         >
       </template>
@@ -54,23 +58,36 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { Menu } from '@/types'
-import { getAll } from '@/services/menu'
+import { getAll, delMenu } from '@/services/menu'
 
 export default defineComponent({
-  data: (): {
-    menus: Menu[]
-  } => ({
+  data: () => ({
     menus: []
   }),
   methods: {
-    handleEdit(row: any) {
-      console.log(row)
-    },
-    handleDelete(row: any) {
-      console.log(row)
-    },
     async loadMenus() {
-      this.menus = await getAll()
+      // so ugly...
+      this.menus = ((await getAll()) as unknown) as []
+    },
+    handleDelete(item: Menu) {
+      this.$confirm('是否删除该菜单？').then(async () => {
+        await delMenu(item.id || '')
+        this.loadMenus()
+        this.$message.success('删除成功')
+      })
+    },
+    handleEdit(item: Menu) {
+      this.$router.push({
+        name: 'menuEdit',
+        params: {
+          id: item.id + ''
+        }
+      })
+    },
+    handleAdd() {
+      this.$router.push({
+        name: 'menuAdd'
+      })
     }
   },
   created() {

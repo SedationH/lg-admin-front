@@ -41,7 +41,7 @@ async function handleUnauthorized(config: object) {
           refreshtoken
         })
         if (!data.success) {
-          throw new Error('token 刷新失败')
+          return Promise.reject(new Error('token 刷新失败'))
         }
         store.commit(
           'user/setUserLoginInfo',
@@ -56,6 +56,7 @@ async function handleUnauthorized(config: object) {
         ElMessage.error(error)
         // let router handle jump page
         store.commit('user/setUserLoginInfo', null)
+        return Promise.reject(new Error('token 刷新失败'))
       }
     } else {
       reqQueue.push(() => request(config))
@@ -101,6 +102,10 @@ request.interceptors.response.use(
     return Promise.reject(message)
   },
   error => {
+    // 错误处理原则
+    // 拦截器不捕获异常，向外返回
+    // 给予错误提示
+
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     if (error.response) {
@@ -121,6 +126,8 @@ request.interceptors.response.use(
       } else if (status === 401) {
         // handle Unauthorized
         return handleUnauthorized(config)
+      } else {
+        ElMessage.error('服务器报错')
       }
     } else if (error.request) {
       // The request was made but no response was received

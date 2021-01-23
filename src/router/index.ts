@@ -63,6 +63,22 @@ const routes: Array<RouteRecordRaw> = [
           )
       },
       {
+        path: '/menu/add',
+        name: 'menuAdd',
+        component: () =>
+          import(
+            /* webpackChunkName: 'menuAddOrEdit' */ '@/views/menu/add.vue'
+          )
+      },
+      {
+        path: '/menu/edit',
+        name: 'menuEdit',
+        component: () =>
+          import(
+            /* webpackChunkName: 'menuAddOrEdit' */ '@/views/menu/edit.vue'
+          )
+      },
+      {
         path: '/resource',
         name: 'resource',
         component: () =>
