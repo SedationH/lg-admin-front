@@ -83,8 +83,10 @@ request.interceptors.response.use(
     // Any status code that lie within the range of 2xx cause this function to trigger
     // 区分http状态码和规定state
     const {
-      data: { state, content, message }
+      data: { state, content, message, data, code }
     } = response
+    // front / boss 两处的接口对正确返回的标识符处理不同
+    // front
     if (state === 200 || state === 1) {
       if (typeof content === 'string') {
         return JSON.parse(content)
@@ -92,7 +94,10 @@ request.interceptors.response.use(
         return content
       }
     }
-
+    // boss
+    if (code === '000000') {
+      return data
+    }
     return Promise.reject(message)
   },
   error => {
@@ -143,13 +148,12 @@ const post = (url: string, data?: object) => {
   })
 }
 
-const get = (url: string, params?: object) => {
-  return request({
+const get = (url: string, params?: object) =>
+  request({
     url,
     method: 'GET',
     params
   })
-}
 
 export { post, get }
 
