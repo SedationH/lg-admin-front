@@ -55,7 +55,11 @@ async function handleUnauthorized(config: object) {
       } catch (error) {
         ElMessage.error(error)
         // let router handle jump page
+        // 无法 401的时候多个请求已经到这里了，不是从最外面走逻辑的
         store.commit('user/setUserLoginInfo', null)
+        router.push({
+          name: 'login'
+        })
         return Promise.reject(new Error('token 刷新失败'))
       }
     } else {
@@ -144,8 +148,8 @@ request.interceptors.response.use(
   }
 )
 
-const post = (url: string, data?: object) => {
-  return request({
+const post = (url: string, data?: object) =>
+  request({
     url,
     method: 'POST',
     data: qs.stringify(data)
@@ -153,7 +157,7 @@ const post = (url: string, data?: object) => {
     //   'content-type': 'application/x-www-form-urlencoded'
     // }
   })
-}
+
 const get = (url: string, params?: object) =>
   request({
     url,
