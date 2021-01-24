@@ -36,3 +36,21 @@ export const saveOrUpdate = (data: Menu) => {
 export const getEditMenuInfo = (id: string) => {
   return get('/boss/menu/getEditMenuInfo', { id })
 }
+
+/**
+ * 获取角色拥有的菜单列表
+ */
+export const getRoleMenus = (params: object) => {
+  return get('/boss/menu/getRoleMenus', params)
+}
+
+/**
+ * 给角色分配菜单
+ */
+export const allocateRoleMenus = (data: object) => {
+  return request({
+    url: '/boss/menu/allocateRoleMenus',
+    method: 'POST',
+    data
+  })
+}

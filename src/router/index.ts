@@ -95,6 +95,24 @@ const routes: Array<RouteRecordRaw> = [
           )
       },
       {
+        path: '/role/:id/menu',
+        name: 'roleMenu',
+        component: () =>
+          import(
+            /* webpackChunkName: 'roleMenu' */ '@/views/role/menu.vue'
+          ),
+        // TIP: Reduced coupling
+        props: true
+      },
+      {
+        path: '/role/:id/resource',
+        name: 'roleResource',
+        component: () =>
+          import(
+            /* webpackChunkName: 'roleResource' */ '@/views/role/resource.vue'
+          )
+      },
+      {
         path: '/user',
         name: 'user',
         component: () =>

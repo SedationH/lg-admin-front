@@ -160,8 +160,11 @@ export default {
     handleAssigningResources() {
       console.log('resource')
     },
-    handleAssigningMenus() {
-      console.log('menus')
+    handleAssigningMenus({ id }) {
+      this.$router.push({
+        name: 'roleMenu',
+        params: { id }
+      })
     },
     async loadRolePages() {
       const { records, total } = await getRolePages(
