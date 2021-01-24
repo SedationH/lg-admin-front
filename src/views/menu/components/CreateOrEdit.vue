@@ -124,7 +124,6 @@ export default defineComponent({
       )
     },
     resetForm() {
-      console.log(this.$refs.form as typeof ElForm)
       ;(this.$refs.form as typeof ElForm).resetFields()
     }
   },

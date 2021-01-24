@@ -41,7 +41,7 @@ async function handleUnauthorized(config: object) {
           refreshtoken
         })
         if (!data.success) {
-          return Promise.reject(new Error('token 刷新失败'))
+          throw new Error('token 刷新失败')
         }
         store.commit(
           'user/setUserLoginInfo',
@@ -154,7 +154,6 @@ const post = (url: string, data?: object) => {
     // }
   })
 }
-
 const get = (url: string, params?: object) =>
   request({
     url,

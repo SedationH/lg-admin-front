@@ -224,3 +224,14 @@ gc q-css 中不知道为啥有些挂在elementplus元素上的css不生效
 
 
 axios 的类型处理好麻烦 有什么方便的方法吗？
+
+看到的资料，但是自己还不会用
+
+- https://www.onlyling.com/archives/396 
+- https://stackoverflow.com/questions/62217642/react-and-typescript-which-types-for-axios-response
+
+后面统一处理下
+
+
+
+element啥时候注册的v-loading?
