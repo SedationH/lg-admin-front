@@ -1,10 +1,11 @@
-import { createStore } from 'vuex'
-import user from './user'
+import Vue from "vue";
+import Vuex from "vuex";
 
-export default createStore({
-  // @ts-ignore：state中的数据由modules提供
+Vue.use(Vuex);
+
+export default new Vuex.Store({
   state: {},
   mutations: {},
   actions: {},
-  modules: { user }
-})
+  modules: {}
+});
